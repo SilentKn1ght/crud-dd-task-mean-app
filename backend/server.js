@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const db = require("./app/models");
+console.log("DB URL:", db.url);
 db.mongoose
   .connect(db.url, {
     useNewUrlParser: true,
