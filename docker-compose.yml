@@ -5,8 +5,8 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: myuser
-      MONGO_INITDB_ROOT_PASSWORD: mypassword
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
     volumes:
       - mongo_data:/data/db
 
@@ -15,7 +15,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      MONGODB_URL: mongodb://myuser:mypassword@mongo:27017/MyDB?authSource=admin
+      MONGODB_URL: mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:27017/MyDB?authSource=admin
     depends_on:
       - mongo
 
