@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: myuser
+      MONGO_INITDB_ROOT_PASSWORD: mypassword
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    image: silentkn1ght/mean-backend:latest
+    ports:
+      - "8080:8080"
+    environment:
+      MONGODB_URL: mongodb://myuser:mypassword@mongo:27017/MyDB?authSource=admin
+    depends_on:
+      - mongo
+
+  frontend:
+    image: silentkn1ght/mean-frontend:latest
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
