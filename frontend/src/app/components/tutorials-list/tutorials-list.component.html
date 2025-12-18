@@ -1,43 +1,59 @@
-<div class="list row">
-  <div class="col-md-8">
-    <div class="input-group mb-3">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Search by title"
-        [(ngModel)]="title"
-      />
-      <div class="input-group-append">
-        <button
-          class="btn btn-outline-secondary"
-          (click)="searchTitle()"
-        >
-          Search
-        </button>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="mb-0">Tutorials</h5>
+        <button class="btn btn-sm btn-outline-danger" (click)="removeAllTutorials()">Remove All</button>
+      </div>
+      <div class="card-body">
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by title"
+            [(ngModel)]="title"
+            (keyup.enter)="searchTitle()"
+          />
+          <button class="btn btn-primary" (click)="searchTitle()">Search</button>
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger" role="alert">{{ error }}</div>
+        <div *ngIf="loading" class="spinner-wrap"><div class="spinner-border text-primary" role="status"></div></div>
+
+        <div *ngIf="!loading && tutorials && tutorials.length > 0; else empty">
+          <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle">
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col" class="d-none d-md-table-cell">Description</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let tutorial of tutorials; let i = index" (click)="setActiveTutorial(tutorial, i)" [class.table-active]="i === currentIndex" style="cursor: pointer;">
+                  <td>{{ tutorial.title }}</td>
+                  <td class="d-none d-md-table-cell text-muted">{{ tutorial.description }}</td>
+                  <td>
+                    <span class="badge" [class.bg-success]="tutorial.published" [class.bg-secondary]="!tutorial.published">{{ tutorial.published ? 'Published' : 'Pending' }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <ng-template #empty>
+          <div class="empty-state">
+            <div class="icon">📚</div>
+            <p class="mt-2 mb-0">No tutorials found. Try adding one or search differently.</p>
+          </div>
+        </ng-template>
       </div>
     </div>
   </div>
-  <div class="col-md-6">
-    <h4>Tutorials List</h4>
-    <ul class="list-group">
-      <li
-        class="list-group-item"
-        *ngFor="let tutorial of tutorials; let i = index"
-        [class.active]="i == currentIndex"
-        (click)="setActiveTutorial(tutorial, i)"
-      >
-        {{ tutorial.title }}
-      </li>
-    </ul>
 
-    <button class="m-3 btn btn-sm btn-danger" (click)="removeAllTutorials()">
-      Remove All
-    </button>
-  </div>
-  <div class="col-md-6">
-    <app-tutorial-details
-      [viewMode]="true"
-      [currentTutorial]="currentTutorial"
-    ></app-tutorial-details>
+  <div class="col-lg-5">
+    <app-tutorial-details [viewMode]="true" [currentTutorial]="currentTutorial"></app-tutorial-details>
   </div>
 </div>

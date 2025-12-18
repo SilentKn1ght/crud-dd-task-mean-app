@@ -4,6 +4,7 @@ import { TutorialService } from 'src/app/services/tutorial.service';
 
 @Component({
   selector: 'app-tutorials-list',
+  standalone: false,
   templateUrl: './tutorials-list.component.html',
   styleUrls: ['./tutorials-list.component.css']
 })
@@ -13,6 +14,8 @@ export class TutorialsListComponent implements OnInit {
   currentTutorial: Tutorial = {};
   currentIndex = -1;
   title = '';
+  loading = false;
+  error: string | null = null;
 
   constructor(private tutorialService: TutorialService) { }
 
@@ -21,13 +24,19 @@ export class TutorialsListComponent implements OnInit {
   }
 
   retrieveTutorials(): void {
+    this.loading = true;
+    this.error = null;
     this.tutorialService.getAll()
       .subscribe({
         next: (data) => {
           this.tutorials = data;
-          console.log(data);
+          this.loading = false;
         },
-        error: (e) => console.error(e)
+        error: (e) => {
+          console.error(e);
+          this.error = 'Failed to load tutorials.';
+          this.loading = false;
+        }
       });
   }
 
@@ -43,27 +52,35 @@ export class TutorialsListComponent implements OnInit {
   }
 
   removeAllTutorials(): void {
+    if (!confirm('Delete all tutorials? This cannot be undone.')) return;
     this.tutorialService.deleteAll()
       .subscribe({
-        next: (res) => {
-          console.log(res);
+        next: () => {
           this.refreshList();
         },
-        error: (e) => console.error(e)
+        error: (e) => {
+          console.error(e);
+          this.error = 'Failed to remove tutorials.';
+        }
       });
   }
 
   searchTitle(): void {
     this.currentTutorial = {};
     this.currentIndex = -1;
-
+    this.loading = true;
+    this.error = null;
     this.tutorialService.findByTitle(this.title)
       .subscribe({
         next: (data) => {
           this.tutorials = data;
-          console.log(data);
+          this.loading = false;
         },
-        error: (e) => console.error(e)
+        error: (e) => {
+          console.error(e);
+          this.error = 'Search failed.';
+          this.loading = false;
+        }
       });
   }
 

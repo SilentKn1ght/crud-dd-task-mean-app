@@ -4,6 +4,7 @@ import { TutorialService } from 'src/app/services/tutorial.service';
 
 @Component({
   selector: 'app-add-tutorial',
+  standalone: false,
   templateUrl: './add-tutorial.component.html',
   styleUrls: ['./add-tutorial.component.css']
 })
@@ -15,22 +16,30 @@ export class AddTutorialComponent {
     published: false
   };
   submitted = false;
+  saving = false;
 
   constructor(private tutorialService: TutorialService) { }
 
   saveTutorial(): void {
+    if (!this.tutorial.title?.trim() || !this.tutorial.description?.trim()) {
+      return;
+    }
     const data = {
-      title: this.tutorial.title,
-      description: this.tutorial.description
+      title: this.tutorial.title.trim(),
+      description: this.tutorial.description.trim()
     };
 
+    this.saving = true;
     this.tutorialService.create(data)
       .subscribe({
-        next: (res) => {
-          console.log(res);
+        next: () => {
           this.submitted = true;
+          this.saving = false;
         },
-        error: (e) => console.error(e)
+        error: (e) => {
+          console.error(e);
+          this.saving = false;
+        }
       });
   }
 

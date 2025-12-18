@@ -5,6 +5,7 @@ import { Tutorial } from 'src/app/models/tutorial.model';
 
 @Component({
   selector: 'app-tutorial-details',
+  standalone: false,
   templateUrl: './tutorial-details.component.html',
   styleUrls: ['./tutorial-details.component.css']
 })
@@ -19,6 +20,7 @@ export class TutorialDetailsComponent implements OnInit {
   };
   
   message = '';
+  deleting = false;
 
   constructor(
     private tutorialService: TutorialService,
@@ -69,21 +71,29 @@ export class TutorialDetailsComponent implements OnInit {
     this.tutorialService.update(this.currentTutorial.id, this.currentTutorial)
       .subscribe({
         next: (res) => {
-          console.log(res);
           this.message = res.message ? res.message : 'This tutorial was updated successfully!';
         },
-        error: (e) => console.error(e)
+        error: (e) => {
+          console.error(e);
+          this.message = 'Update failed.';
+        }
       });
   }
 
   deleteTutorial(): void {
+    if (!confirm('Delete this tutorial?')) return;
+    this.deleting = true;
     this.tutorialService.delete(this.currentTutorial.id)
       .subscribe({
-        next: (res) => {
-          console.log(res);
+        next: () => {
+          this.deleting = false;
           this.router.navigate(['/tutorials']);
         },
-        error: (e) => console.error(e)
+        error: (e) => {
+          console.error(e);
+          this.deleting = false;
+          this.message = 'Delete failed.';
+        }
       });
   }
 
