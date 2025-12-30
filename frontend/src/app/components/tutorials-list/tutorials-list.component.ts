@@ -28,8 +28,8 @@ export class TutorialsListComponent implements OnInit {
     this.error = null;
     this.tutorialService.getAll()
       .subscribe({
-        next: (data) => {
-          this.tutorials = data;
+        next: (response) => {
+          this.tutorials = response.tutorials || response;
           this.loading = false;
         },
         error: (e) => {
@@ -72,8 +72,8 @@ export class TutorialsListComponent implements OnInit {
     this.error = null;
     this.tutorialService.findByTitle(this.title)
       .subscribe({
-        next: (data) => {
-          this.tutorials = data;
+        next: (response) => {
+          this.tutorials = response.tutorials || response;
           this.loading = false;
         },
         error: (e) => {

@@ -13,5 +13,6 @@ RUN node --max_old_space_size=1024 ./node_modules/@angular/cli/bin/ng build --co
 # Stage 2: Serve with Nginx
 FROM nginx:stable-alpine AS runner
 COPY --from=builder /app/dist/angular-15-crud /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
